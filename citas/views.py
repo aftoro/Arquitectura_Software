@@ -1,23 +1,13 @@
-from django.shortcuts import render
-from django.views import View
-from django.http import JsonResponse
+from django.views.generic import TemplateView
 from .services import CitaService
-from .models import Cliente, Barbero, Servicio
 
-class CrearCitaView(View):
+class CrearCitaView(TemplateView):
+    template_name = "citas/crear_cita.html"
+    service_class = CitaService
 
-    def post(self, request):
-        cliente_id = request.POST.get("cliente_id")
-        barbero_id = request.POST.get("barbero_id")
-        servicio_id = request.POST.get("servicio_id")
-        fecha = request.POST.get("fecha")
-     
-        cliente = Cliente.objects.get(id=cliente_id)
-        barbero = Barbero.objects.get(id=barbero_id)
-        servicio = Servicio.objects.get(id=servicio_id)
+    def post(self, request, *args, **kwargs):
+        return self.service_class().crear_cita_response(request.POST)
 
-        try:
-            cita = CitaService.crear_cita(cliente, barbero, servicio, fecha, tipo="premium")
-            return JsonResponse({"msg": "Cita creada", "cita_id": cita.id})
-        except Exception as e:
-            return JsonResponse({"error": str(e)}, status=400)
+
+class HomeView(TemplateView):
+    template_name = "citas/index.html"

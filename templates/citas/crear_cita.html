@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fstyle | Agendar cita</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Source+Serif+4:wght@300;400;600&display=swap');
+
+    :root {
+      --bg: #f4efe6;
+      --ink: #1f1b16;
+      --accent: #0f766e;
+      --accent-2: #b45309;
+      --card: #fffaf2;
+      --muted: #6b6154;
+      --shadow: 0 12px 30px rgba(31, 27, 22, 0.12);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Source Serif 4", serif;
+      color: var(--ink);
+      background: radial-gradient(1200px 600px at 10% -10%, #fce7c8 0%, transparent 60%),
+        radial-gradient(900px 500px at 90% 10%, #d7f3ee 0%, transparent 55%),
+        var(--bg);
+    }
+
+    .container {
+      width: min(1100px, 92vw);
+      margin: 0 auto;
+    }
+
+    header {
+      padding: 28px 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .brand {
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+    }
+
+    .brand h1 {
+      font-family: "Bebas Neue", sans-serif;
+      letter-spacing: 2px;
+      font-size: 36px;
+      margin: 0;
+    }
+
+    .brand span {
+      font-size: 14px;
+      color: var(--muted);
+    }
+
+    .nav {
+      display: flex;
+      gap: 16px;
+      font-size: 14px;
+      color: var(--muted);
+    }
+
+    .nav a {
+      color: inherit;
+      text-decoration: none;
+      padding-bottom: 2px;
+      border-bottom: 2px solid transparent;
+    }
+
+    .nav a.active {
+      border-bottom-color: var(--accent);
+      color: var(--ink);
+    }
+
+    .calendar {
+      display: grid;
+      gap: 18px;
+    }
+
+    .month {
+      border: 1px solid #efe4d4;
+      border-radius: 14px;
+      padding: 12px;
+      background: #fff;
+    }
+
+    .month-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+      font-size: 14px;
+      color: var(--muted);
+    }
+
+    .month-header strong {
+      font-family: "Bebas Neue", sans-serif;
+      font-size: 20px;
+      color: var(--ink);
+      letter-spacing: 1px;
+    }
+
+    .weekdays,
+    .days {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 6px;
+      text-align: center;
+    }
+
+    .weekdays span {
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .day {
+      border: 1px solid transparent;
+      border-radius: 8px;
+      padding: 6px 0;
+      font-size: 12px;
+      background: #faf6ef;
+      cursor: pointer;
+    }
+
+    .day.disabled {
+      opacity: 0.35;
+      cursor: not-allowed;
+    }
+
+    .day.selected {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 2px rgba(15, 118, 110, 0.2);
+      color: var(--ink);
+      font-weight: 600;
+    }
+
+    .day.empty {
+      background: #fff;
+      border: 1px dashed #e0d5c4;
+    }
+
+    .day.status-green {
+      background: #d8f5e2;
+      border-color: #6ec190;
+    }
+
+    .day.status-yellow {
+      background: #fff1c8;
+      border-color: #f1b64c;
+    }
+
+    .day.status-red {
+      background: #ffd9d9;
+      border-color: #e57373;
+      color: #8a1c1c;
+    }
+
+    .agenda {
+      margin-top: 20px;
+      padding: 26px 0 60px;
+    }
+
+    .section-title {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+
+    .section-title h3 {
+      font-family: "Bebas Neue", sans-serif;
+      font-size: 36px;
+      margin: 0;
+    }
+
+    .section-title span {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+
+    .panel {
+      background: var(--card);
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: var(--shadow);
+      animation: fadeUp 0.6s ease-out both;
+    }
+
+    .panel:nth-child(2) {
+      animation-delay: 0.15s;
+    }
+
+    label {
+      font-size: 13px;
+      color: var(--muted);
+      display: block;
+      margin-bottom: 6px;
+    }
+
+
+    .details {
+      display: grid;
+      gap: 12px;
+      margin-top: 12px;
+    }
+
+    .detail-card {
+      border: 1px solid #efe4d4;
+      border-radius: 12px;
+      padding: 12px;
+      display: grid;
+      gap: 4px;
+      background: #fff;
+    }
+
+    .detail-card .name {
+      font-weight: 600;
+    }
+
+    .detail-card .meta {
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .price {
+      font-weight: 600;
+      color: var(--accent);
+    }
+
+    .agenda-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .agenda-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 10px 12px;
+      border-radius: 10px;
+      background: #fff;
+      border: 1px solid #efe4d4;
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .agenda-item:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 18px rgba(31, 27, 22, 0.08);
+    }
+
+    .agenda-item strong {
+      font-size: 14px;
+    }
+
+    .agenda-item span {
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .agenda-item.selected {
+      border-color: var(--accent);
+      background: #eef8f6;
+    }
+
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 10px;
+    }
+
+    .legend span {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .legend i {
+      width: 12px;
+      height: 12px;
+      border-radius: 4px;
+      display: inline-block;
+      border: 1px solid #e0d5c4;
+      background: #fff;
+    }
+
+    .legend .green {
+      background: #d8f5e2;
+      border-color: #6ec190;
+    }
+
+    .legend .yellow {
+      background: #fff1c8;
+      border-color: #f1b64c;
+    }
+
+    .legend .red {
+      background: #ffd9d9;
+      border-color: #e57373;
+    }
+
+    .confirm-btn {
+      border: none;
+      background: var(--ink);
+      color: #fff;
+      padding: 10px 14px;
+      border-radius: 999px;
+      font-size: 12px;
+      cursor: pointer;
+      justify-self: start;
+    }
+
+    .confirm-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    footer {
+      padding: 24px 0 40px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(12px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @media (max-width: 860px) {
+      .grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="brand">
+        <h1>Fstyle</h1>
+        <span>Barberia y estilo</span>
+      </div>
+      <nav class="nav">
+        <a href="/">Inicio</a>
+        <a class="active" href="/crear/">Agendar cita</a>
+      </nav>
+    </header>
+
+    <section class="agenda" id="agenda">
+      <div class="section-title">
+        <h3>Agendar cita</h3>
+        <span>Selecciona un dia y elige tu horario</span>
+      </div>
+
+      <div class="grid">
+        <div class="panel">
+          <label>Calendario (3 meses)</label>
+          <div class="calendar" id="calendar"></div>
+          <div class="legend">
+            <span><i></i>Blanco: sin agenda</span>
+            <span><i class="green"></i>Verde: mas de la mitad disponible</span>
+            <span><i class="yellow"></i>Amarillo: menos de la mitad disponible</span>
+            <span><i class="red"></i>Rojo: sin disponibilidad</span>
+          </div>
+          <div class="details" id="detalle-cita">
+            <div class="detail-card">
+              <div class="name">Selecciona un dia</div>
+              <div class="meta">Aqui veras barbero, horario, servicio y precio.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <label>Horarios disponibles</label>
+          <div class="agenda-list" id="agenda-lista"></div>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      Fstyle 2026 · Agenda inteligente para barberia
+    </footer>
+  </div>
+
+  <script>
+    const data = {
+      "2026-02-11": [
+        { barbero: "Nicolas", desde: "10:00", hasta: "11:00", servicio: "Fade", precio: 25000 },
+        { barbero: "Julian", desde: "12:00", hasta: "13:00", servicio: "Barba", precio: 18000 }
+      ],
+      "2026-02-12": [
+        { barbero: "Laura", desde: "09:30", hasta: "10:30", servicio: "Corte clasico", precio: 22000 }
+      ]
+    };
+
+    const calendar = document.getElementById("calendar");
+    const lista = document.getElementById("agenda-lista");
+    const detalle = document.getElementById("detalle-cita");
+    const today = new Date();
+    const startDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+    const maxDate = new Date(today.getFullYear(), today.getMonth() + 3, today.getDate());
+    let selectedDate = startDate;
+    let selectedSlot = null;
+
+    const availability = {
+      "2026-02-11": { total: 6, available: 4 },
+      "2026-02-12": { total: 6, available: 2 },
+      "2026-02-13": { total: 6, available: 0 }
+    };
+
+    function renderLista(fecha) {
+      lista.innerHTML = "";
+      const items = data[fecha] || [];
+      selectedSlot = null;
+
+      if (!items.length) {
+        lista.innerHTML = "<div class=\"detail-card\">No hay horarios disponibles.</div>";
+        return;
+      }
+
+      items.forEach((item, index) => {
+        const row = document.createElement("div");
+        row.className = "agenda-item";
+        row.innerHTML = `
+          <div>
+            <strong>${item.barbero}</strong>
+            <span>${item.desde} - ${item.hasta}</span>
+          </div>
+          <span>${item.servicio}</span>
+        `;
+        row.addEventListener("click", () => {
+          document.querySelectorAll(".agenda-item").forEach((el) => {
+            el.classList.remove("selected");
+          });
+          row.classList.add("selected");
+          selectedSlot = item;
+          showDetalle(item, index + 1);
+        });
+        lista.appendChild(row);
+      });
+    }
+
+    function showDetalle(item, orden) {
+      detalle.innerHTML = `
+        <div class=\"detail-card\">
+          <div class=\"name\">Cita #${orden}</div>
+          <div class=\"meta\">Barbero: ${item.barbero}</div>
+          <div class=\"meta\">Horario: ${item.desde} - ${item.hasta}</div>
+          <div class=\"meta\">Servicio: ${item.servicio}</div>
+          <div class=\"price\">$ ${item.precio.toLocaleString("es-CO")}</div>
+          <button class=\"confirm-btn\" id=\"confirm-btn\">Confirmar cita</button>
+        </div>
+      `;
+
+      const btn = document.getElementById("confirm-btn");
+      btn.addEventListener("click", () => {
+        if (!selectedSlot) {
+          return;
+        }
+        alert("Cita confirmada para " + selectedSlot.barbero + " el " + toKey(selectedDate));
+      });
+    }
+
+    function toKey(date) {
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, "0");
+      const day = String(date.getDate()).padStart(2, "0");
+      return `${year}-${month}-${day}`;
+    }
+
+    function sameDay(a, b) {
+      return a.getFullYear() === b.getFullYear()
+        && a.getMonth() === b.getMonth()
+        && a.getDate() === b.getDate();
+    }
+
+    function inRange(date) {
+      return date >= startDate && date <= maxDate;
+    }
+
+    function getStatus(date) {
+      const key = toKey(date);
+      const info = availability[key];
+
+      if (!info) {
+        return "empty";
+      }
+
+      if (info.total === 0 || info.available === 0) {
+        return "status-red";
+      }
+
+      const ratio = info.available / info.total;
+      if (ratio > 0.5) {
+        return "status-green";
+      }
+      return "status-yellow";
+    }
+
+    function buildMonth(monthOffset) {
+      const base = new Date(startDate.getFullYear(), startDate.getMonth() + monthOffset, 1);
+      const year = base.getFullYear();
+      const month = base.getMonth();
+      const monthName = base.toLocaleString("es-ES", { month: "long" });
+
+      const monthEl = document.createElement("div");
+      monthEl.className = "month";
+      monthEl.innerHTML = `
+        <div class=\"month-header\">
+          <strong>${monthName}</strong>
+          <span>${year}</span>
+        </div>
+        <div class=\"weekdays\">
+          <span>Lu</span><span>Ma</span><span>Mi</span><span>Ju</span><span>Vi</span><span>Sa</span><span>Do</span>
+        </div>
+        <div class=\"days\"></div>
+      `;
+
+      const daysEl = monthEl.querySelector(".days");
+      const firstDay = new Date(year, month, 1);
+      const startWeekday = (firstDay.getDay() + 6) % 7;
+      const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+      for (let i = 0; i < startWeekday; i += 1) {
+        const empty = document.createElement("div");
+        daysEl.appendChild(empty);
+      }
+
+      for (let day = 1; day <= daysInMonth; day += 1) {
+        const current = new Date(year, month, day);
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "day";
+        btn.textContent = String(day);
+
+        if (!inRange(current)) {
+          btn.classList.add("disabled");
+          btn.disabled = true;
+        } else {
+          btn.classList.add(getStatus(current));
+          btn.addEventListener("click", () => {
+            selectedDate = current;
+            renderCalendar();
+            renderLista(toKey(current));
+            detalle.innerHTML = "<div class=\"detail-card\"><div class=\"name\">Selecciona un horario</div><div class=\"meta\">Haz clic en un turno para ver detalles.</div></div>";
+          });
+        }
+
+        if (sameDay(current, selectedDate)) {
+          btn.classList.add("selected");
+        }
+
+        daysEl.appendChild(btn);
+      }
+
+      return monthEl;
+    }
+
+    function renderCalendar() {
+      calendar.innerHTML = "";
+      for (let i = 0; i < 3; i += 1) {
+        calendar.appendChild(buildMonth(i));
+      }
+    }
+
+    renderCalendar();
+    renderLista(toKey(selectedDate));
+  </script>
+</body>
+</html>
