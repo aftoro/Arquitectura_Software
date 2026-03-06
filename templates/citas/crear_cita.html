@@ -411,6 +411,56 @@
       ],
       "2026-02-12": [
         { barbero: "Laura", desde: "09:30", hasta: "10:30", servicio: "Corte clasico", precio: 22000 }
+      ],
+      "2026-02-14": [
+        { barbero: "Mateo", desde: "09:00", hasta: "10:00", servicio: "Fade", precio: 25000 },
+        { barbero: "Laura", desde: "11:00", hasta: "12:00", servicio: "Barba", precio: 18000 },
+        { barbero: "Nicolas", desde: "16:00", hasta: "17:00", servicio: "Corte clasico", precio: 22000 }
+      ],
+      "2026-02-18": [
+        { barbero: "Julian", desde: "08:30", hasta: "09:30", servicio: "Premium", precio: 32000 },
+        { barbero: "Mateo", desde: "14:00", hasta: "15:00", servicio: "Fade", precio: 25000 }
+      ],
+      "2026-02-25": [
+        { barbero: "Laura", desde: "10:00", hasta: "11:00", servicio: "Barba", precio: 18000 },
+        { barbero: "Nicolas", desde: "13:00", hasta: "14:00", servicio: "Corte clasico", precio: 22000 }
+      ],
+      "2026-03-03": [
+        { barbero: "Mateo", desde: "09:00", hasta: "10:00", servicio: "Fade", precio: 25000 },
+        { barbero: "Julian", desde: "15:30", hasta: "16:30", servicio: "Barba", precio: 18000 }
+      ],
+      "2026-03-10": [
+        { barbero: "Nicolas", desde: "11:00", hasta: "12:00", servicio: "Premium", precio: 32000 }
+      ],
+      "2026-03-18": [
+        { barbero: "Laura", desde: "08:00", hasta: "09:00", servicio: "Corte clasico", precio: 22000 },
+        { barbero: "Mateo", desde: "12:00", hasta: "13:00", servicio: "Fade", precio: 25000 },
+        { barbero: "Julian", desde: "17:00", hasta: "18:00", servicio: "Barba", precio: 18000 }
+      ],
+      "2026-03-26": [
+        { barbero: "Nicolas", desde: "10:30", hasta: "11:30", servicio: "Corte clasico", precio: 22000 }
+      ],
+      "2026-04-02": [
+        { barbero: "Laura", desde: "09:30", hasta: "10:30", servicio: "Barba", precio: 18000 },
+        { barbero: "Mateo", desde: "15:00", hasta: "16:00", servicio: "Fade", precio: 25000 }
+      ],
+      "2026-04-11": [
+        { barbero: "Julian", desde: "08:30", hasta: "09:30", servicio: "Premium", precio: 32000 },
+        { barbero: "Nicolas", desde: "13:30", hasta: "14:30", servicio: "Corte clasico", precio: 22000 }
+      ],
+      "2026-04-20": [
+        { barbero: "Mateo", desde: "10:00", hasta: "11:00", servicio: "Fade", precio: 25000 }
+      ],
+      "2026-04-28": [
+        { barbero: "Laura", desde: "16:00", hasta: "17:00", servicio: "Barba", precio: 18000 },
+        { barbero: "Julian", desde: "18:00", hasta: "19:00", servicio: "Corte clasico", precio: 22000 }
+      ],
+      "2026-05-05": [
+        { barbero: "Nicolas", desde: "09:00", hasta: "10:00", servicio: "Premium", precio: 32000 }
+      ],
+      "2026-05-12": [
+        { barbero: "Mateo", desde: "12:30", hasta: "13:30", servicio: "Fade", precio: 25000 },
+        { barbero: "Laura", desde: "14:00", hasta: "15:00", servicio: "Barba", precio: 18000 }
       ]
     };
 
@@ -426,7 +476,20 @@
     const availability = {
       "2026-02-11": { total: 6, available: 4 },
       "2026-02-12": { total: 6, available: 2 },
-      "2026-02-13": { total: 6, available: 0 }
+      "2026-02-13": { total: 6, available: 0 },
+      "2026-02-14": { total: 6, available: 5 },
+      "2026-02-18": { total: 6, available: 3 },
+      "2026-02-25": { total: 6, available: 2 },
+      "2026-03-03": { total: 6, available: 4 },
+      "2026-03-10": { total: 6, available: 1 },
+      "2026-03-18": { total: 6, available: 5 },
+      "2026-03-26": { total: 6, available: 2 },
+      "2026-04-02": { total: 6, available: 4 },
+      "2026-04-11": { total: 6, available: 3 },
+      "2026-04-20": { total: 6, available: 2 },
+      "2026-04-28": { total: 6, available: 4 },
+      "2026-05-05": { total: 6, available: 1 },
+      "2026-05-12": { total: 6, available: 3 }
     };
 
     function renderLista(fecha) {
