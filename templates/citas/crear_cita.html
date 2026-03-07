@@ -330,6 +330,44 @@
       cursor: not-allowed;
     }
 
+    .api-fields {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .api-fields input,
+    .api-fields select {
+      border: 1px solid #e2d7c8;
+      border-radius: 8px;
+      padding: 8px;
+      font-family: inherit;
+      background: #fff;
+    }
+
+    .response-box {
+      margin-top: 10px;
+      border-radius: 8px;
+      padding: 10px;
+      font-size: 13px;
+      border: 1px solid #e2d7c8;
+      background: #fff;
+      color: var(--muted);
+    }
+
+    .response-box.ok {
+      background: #eaf9f1;
+      border-color: #9bd6b4;
+      color: #0d5a38;
+    }
+
+    .response-box.error {
+      background: #ffecec;
+      border-color: #f0a6a6;
+      color: #8a1c1c;
+    }
+
     footer {
       padding: 24px 0 40px;
       color: var(--muted);
@@ -364,6 +402,11 @@
       <nav class="nav">
         <a href="/">Inicio</a>
         <a class="active" href="/crear/">Agendar cita</a>
+        <div id="user-section" style="margin-left: auto; display: flex; align-items: center; gap: 16px;">
+          <span id="user-name" style="display: none;"></span>
+          <button id="btn-logout" style="display: none; background: transparent; border: 1px solid var(--muted); padding: 6px 14px; border-radius: 6px; cursor: pointer; font-size: 12px; color: var(--muted);">Cambiar usuario</button>
+          <a href="/registro/" id="btn-registro" style="text-decoration: none;"><button style="background: transparent; border: 1px solid var(--accent); color: var(--accent); padding: 6px 14px; border-radius: 6px; cursor: pointer; font-size: 12px;">Registrarse</button></a>
+        </div>
       </nav>
     </header>
 
@@ -404,6 +447,70 @@
   </div>
 
   <script>
+    const API_CREAR_CITA = "/api/citas/crear/";
+    const API_CLIENTES = "/api/clientes/";
+    const API_BARBEROS = "/api/barberos/";
+    const API_SERVICIOS = "/api/servicios/";
+
+    let clientesData = [];
+    let barberosData = [];
+    let serviciosData = [];
+    let clienteRegistrado = null;
+
+    // Cargar cliente registrado del localStorage
+    function cargarClienteRegistrado() {
+      const clienteJSON = localStorage.getItem("clienteRegistrado");
+      if (clienteJSON) {
+        try {
+          clienteRegistrado = JSON.parse(clienteJSON);
+          mostrarClienteRegistrado();
+        } catch (error) {
+          console.error("Error al cargar cliente registrado:", error);
+        }
+      }
+    }
+
+    // Mostrar información del cliente registrado en el header
+    function mostrarClienteRegistrado() {
+      const btnRegistro = document.getElementById("btn-registro");
+      const btnLogout = document.getElementById("btn-logout");
+      const userName = document.getElementById("user-name");
+
+      if (clienteRegistrado) {
+        btnRegistro.style.display = "none";
+        btnLogout.style.display = "block";
+        userName.style.display = "inline";
+        const nombreCompleto = `${clienteRegistrado.nombre} ${clienteRegistrado.apellido}`.trim();
+        userName.textContent = `👤 ${nombreCompleto}`;
+        
+        btnLogout.addEventListener("click", () => {
+          localStorage.removeItem("clienteRegistrado");
+          clienteRegistrado = null;
+          window.location.reload();
+        });
+      }
+    }
+
+    // Cargar datos al inicio
+    async function cargarDatos() {
+      try {
+        const [clientesRes, barberosRes, serviciosRes] = await Promise.all([
+          fetch(API_CLIENTES),
+          fetch(API_BARBEROS),
+          fetch(API_SERVICIOS)
+        ]);
+
+        clientesData = await clientesRes.json();
+        barberosData = await barberosRes.json();
+        serviciosData = await serviciosRes.json();
+      } catch (error) {
+        console.error("Error cargando datos:", error);
+      }
+    }
+
+    cargarClienteRegistrado();
+    cargarDatos();
+
     const data = {
       "2026-02-11": [
         { barbero: "Nicolas", desde: "10:00", hasta: "11:00", servicio: "Fade", precio: 25000 },
@@ -525,6 +632,18 @@
     }
 
     function showDetalle(item, orden) {
+      const clientesOptions = clientesData.map(c => 
+        `<option value="${c.id}" ${clienteRegistrado && c.id === clienteRegistrado.id ? 'selected' : ''}>${c.nombre_completo}</option>`
+      ).join('');
+
+      const barberosOptions = barberosData.map(b => 
+        `<option value="${b.id}">${b.nombre}</option>`
+      ).join('');
+
+      const serviciosOptions = serviciosData.map(s => 
+        `<option value="${s.id}">${s.nombre} - $${s.precio.toLocaleString("es-CO")}</option>`
+      ).join('');
+
       detalle.innerHTML = `
         <div class=\"detail-card\">
           <div class=\"name\">Cita #${orden}</div>
@@ -532,16 +651,83 @@
           <div class=\"meta\">Horario: ${item.desde} - ${item.hasta}</div>
           <div class=\"meta\">Servicio: ${item.servicio}</div>
           <div class=\"price\">$ ${item.precio.toLocaleString("es-CO")}</div>
+          <div class="api-fields">
+            <select id="cliente-id">
+              <option value="">Seleccionar cliente</option>
+              ${clientesOptions}
+            </select>
+            <select id="barbero-id">
+              <option value="">Seleccionar barbero</option>
+              ${barberosOptions}
+            </select>
+            <select id="servicio-id">
+              <option value="">Seleccionar servicio</option>
+              ${serviciosOptions}
+            </select>
+            <select id="tipo-cita">
+              <option value="normal">normal</option>
+              <option value="premium">premium</option>
+            </select>
+          </div>
           <button class=\"confirm-btn\" id=\"confirm-btn\">Confirmar cita</button>
+          <div class="response-box" id="response-box">${clienteRegistrado ? 'Listo para agendar' : 'Selecciona cliente, barbero y servicio para confirmar.'}</div>
         </div>
       `;
 
       const btn = document.getElementById("confirm-btn");
-      btn.addEventListener("click", () => {
+      const responseBox = document.getElementById("response-box");
+
+      btn.addEventListener("click", async () => {
         if (!selectedSlot) {
           return;
         }
-        alert("Cita confirmada para " + selectedSlot.barbero + " el " + toKey(selectedDate));
+
+        const clienteId = Number(document.getElementById("cliente-id").value);
+        const barberoId = Number(document.getElementById("barbero-id").value);
+        const servicioId = Number(document.getElementById("servicio-id").value);
+        const tipo = document.getElementById("tipo-cita").value;
+
+        if (!clienteId || !barberoId || !servicioId) {
+          responseBox.className = "response-box error";
+          responseBox.textContent = "Debes seleccionar cliente, barbero y servicio.";
+          return;
+        }
+
+        const fecha = `${toKey(selectedDate)}T${selectedSlot.desde}:00Z`;
+        btn.disabled = true;
+        responseBox.className = "response-box";
+        responseBox.textContent = "Enviando solicitud...";
+
+        try {
+          const response = await fetch(API_CREAR_CITA, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+              cliente_id: clienteId,
+              barbero_id: barberoId,
+              servicio_id: servicioId,
+              fecha,
+              tipo
+            })
+          });
+
+          const result = await response.json();
+          if (response.ok) {
+            responseBox.className = "response-box ok";
+            responseBox.textContent = `${result.msg} (ID: ${result.cita_id})`;
+            return;
+          }
+
+          responseBox.className = "response-box error";
+          responseBox.textContent = `Error ${response.status}: ${result.error || "No se pudo crear la cita."}`;
+        } catch (error) {
+          responseBox.className = "response-box error";
+          responseBox.textContent = "No fue posible conectar con la API.";
+        } finally {
+          btn.disabled = false;
+        }
       });
     }
 

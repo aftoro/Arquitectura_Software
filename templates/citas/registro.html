@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fstyle | Registro</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Source+Serif+4:wght@300;400;600&display=swap');
+
+    :root {
+      --bg: #f4efe6;
+      --ink: #1f1b16;
+      --accent: #0f766e;
+      --accent-2: #b45309;
+      --card: #fffaf2;
+      --muted: #6b6154;
+      --shadow: 0 12px 30px rgba(31, 27, 22, 0.12);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Source Serif 4", serif;
+      color: var(--ink);
+      background: radial-gradient(1200px 600px at 10% -10%, #fce7c8 0%, transparent 60%),
+        radial-gradient(900px 500px at 90% 10%, #d7f3ee 0%, transparent 55%),
+        var(--bg);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .container {
+      width: min(500px, 92vw);
+      background: var(--card);
+      border-radius: 20px;
+      padding: 48px 40px;
+      box-shadow: var(--shadow);
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+      justify-content: center;
+      margin-bottom: 12px;
+    }
+
+    .brand-name {
+      font-family: "Bebas Neue", sans-serif;
+      font-size: 36px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      color: var(--ink);
+    }
+
+    .brand-subtitle {
+      font-size: 11px;
+      letter-spacing: 3px;
+      color: var(--accent);
+      text-transform: uppercase;
+    }
+
+    h1 {
+      font-family: "Bebas Neue", sans-serif;
+      font-size: 28px;
+      font-weight: 700;
+      margin-top: 0;
+      margin-bottom: 8px;
+      color: var(--ink);
+      letter-spacing: 1px;
+    }
+
+    .subtitle {
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 32px;
+      line-height: 1.5;
+    }
+
+    .form-group {
+      margin-bottom: 24px;
+    }
+
+    label {
+      display: block;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: var(--ink);
+      margin-bottom: 10px;
+    }
+
+    input[type="text"],
+    input[type="tel"],
+    input[type="email"],
+    input[type="password"] {
+      width: 100%;
+      padding: 14px 16px;
+      border: 2px solid #e0d5c4;
+      border-radius: 10px;
+      font-family: "Source Serif 4", serif;
+      font-size: 15px;
+      color: var(--ink);
+      background: #fefbf7;
+      transition: all 0.3s ease;
+    }
+
+    input[type="text"]::placeholder,
+    input[type="tel"]::placeholder,
+    input[type="email"]::placeholder,
+    input[type="password"]::placeholder {
+      color: #b8aca0;
+      font-style: italic;
+    }
+
+    input[type="text"]:focus,
+    input[type="tel"]:focus,
+    input[type="email"]:focus,
+    input[type="password"]:focus {
+      outline: none;
+      border-color: var(--accent);
+      background: #ffffff;
+      box-shadow: 0 0 0 4px rgba(15, 118, 110, 0.1);
+    }
+
+    .button-group {
+      display: flex;
+      gap: 12px;
+      margin-top: 32px;
+    }
+
+    button {
+      flex: 1;
+      padding: 16px 24px;
+      border: none;
+      border-radius: 10px;
+      font-family: "Source Serif 4", serif;
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .btn-register {
+      background: linear-gradient(135deg, var(--accent) 0%, #0d5c57 100%);
+      color: white;
+      box-shadow: 0 4px 15px rgba(15, 118, 110, 0.2);
+    }
+
+    .btn-register:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(15, 118, 110, 0.3);
+    }
+
+    .btn-register:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .btn-secondary {
+      background: transparent;
+      color: var(--muted);
+      border: 2px solid #e0d5c4;
+    }
+
+    .btn-secondary:hover {
+      border-color: var(--muted);
+      color: var(--ink);
+      background: #f8f5f1;
+    }
+
+    .response-box {
+      margin-top: 24px;
+      padding: 14px 16px;
+      border-radius: 10px;
+      font-size: 13px;
+      text-align: center;
+      display: none;
+      font-weight: 500;
+      border: 2px solid transparent;
+    }
+
+    .response-box.show {
+      display: block;
+      animation: slideDown 0.3s ease-out;
+    }
+
+    .response-box.success {
+      background: #d8f5e2;
+      color: #0d5c57;
+      border-color: #a5e8c2;
+    }
+
+    .response-box.error {
+      background: #fee2e2;
+      color: #7c2d12;
+      border-color: #fcddc9;
+    }
+
+    .response-box.info {
+      background: #dbeafe;
+      color: #082f49;
+      border-color: #bfdbfe;
+    }
+
+    .links {
+      text-align: center;
+      margin-top: 28px;
+      padding-top: 28px;
+      border-top: 1px solid #e0d5c4;
+    }
+
+    .links a {
+      color: var(--accent);
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .links a:hover {
+      text-decoration: underline;
+    }
+
+    @keyframes slideDown {
+      from {
+        opacity: 0;
+        transform: translateY(-8px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="brand">
+        <span class="brand-name">Fstyle</span>
+        <span class="brand-subtitle">Barbershop</span>
+      </div>
+      <h1>Crear Cuenta</h1>
+      <p class="subtitle">Completa tu información para agendar citas</p>
+    </header>
+
+    <form id="registro-form">
+      <div class="form-group">
+        <label for="nombre">Nombre</label>
+        <input 
+          type="text" 
+          id="nombre" 
+          name="nombre" 
+          placeholder="Ej: Juan"
+          required 
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="apellido">Apellido</label>
+        <input 
+          type="text" 
+          id="apellido" 
+          name="apellido" 
+          placeholder="Ej: García"
+          required 
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="celular">Celular</label>
+        <input 
+          type="tel" 
+          id="celular" 
+          name="celular" 
+          placeholder="Ej: +57 300 123 4567"
+          required 
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="correo">Correo</label>
+        <input 
+          type="email" 
+          id="correo" 
+          name="correo" 
+          placeholder="Ej: juan@example.com"
+          required 
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="contraseña">Contraseña</label>
+        <input 
+          type="password" 
+          id="contraseña" 
+          name="contraseña" 
+          placeholder="Mínimo 6 caracteres"
+          minlength="6"
+          required 
+        />
+      </div>
+
+      <div class="button-group">
+        <button type="submit" class="btn-register" id="submit-btn">Registrarse</button>
+        <a href="/" style="flex: 1; text-decoration: none;">
+          <button type="button" class="btn-secondary" style="width: 100%;">Cancelar</button>
+        </a>
+      </div>
+
+      <div class="response-box" id="response-box"></div>
+    </form>
+
+    <div class="links">
+      <p>¿Ya tienes cuenta? <a href="/login/">Iniciar sesión</a></p>
+    </div>
+  </div>
+
+  <script>
+    const API_REGISTRO = "/api/registro/";
+
+    const form = document.getElementById("registro-form");
+    const responseBox = document.getElementById("response-box");
+    const submitBtn = document.getElementById("submit-btn");
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const nombre = document.getElementById("nombre").value.trim();
+      const apellido = document.getElementById("apellido").value.trim();
+      const celular = document.getElementById("celular").value.trim();
+      const correo = document.getElementById("correo").value.trim();
+      const contraseña = document.getElementById("contraseña").value;
+
+      if (!nombre || !apellido || !celular || !correo || !contraseña) {
+        responseBox.className = "response-box show error";
+        responseBox.textContent = "Por favor completa todos los campos.";
+        return;
+      }
+
+      if (contraseña.length < 6) {
+        responseBox.className = "response-box show error";
+        responseBox.textContent = "La contraseña debe tener mínimo 6 caracteres.";
+        return;
+      }
+
+      submitBtn.disabled = true;
+      responseBox.className = "response-box show info";
+      responseBox.textContent = "Registrando...";
+
+      try {
+        const response = await fetch(API_REGISTRO, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ nombre, apellido, celular, correo, contraseña })
+        });
+
+        const result = await response.json();
+
+        if (response.ok) {
+          // Guardar cliente en localStorage
+          localStorage.setItem("clienteRegistrado", JSON.stringify({
+            id: result.id,
+            nombre: result.nombre,
+            apellido: result.apellido,
+            celular: result.celular,
+            correo: result.correo
+          }));
+
+          responseBox.className = "response-box show success";
+          responseBox.textContent = `¡Bienvenido ${result.nombre} ${result.apellido}! Redirigiendo...`;
+
+          // Redirigir a crear cita después de 1.5 segundos
+          setTimeout(() => {
+            window.location.href = "/crear/";
+          }, 1500);
+          return;
+        }
+
+        responseBox.className = "response-box show error";
+        let errorMsg = "No se pudo registrar. Intenta de nuevo.";
+        
+        if (result.nombre && result.nombre[0]) errorMsg = `Nombre: ${result.nombre[0]}`;
+        if (result.apellido && result.apellido[0]) errorMsg = `Apellido: ${result.apellido[0]}`;
+        if (result.celular && result.celular[0]) errorMsg = `Celular: ${result.celular[0]}`;
+        if (result.correo && result.correo[0]) errorMsg = `Correo: ${result.correo[0]}`;
+        if (result.contraseña && result.contraseña[0]) errorMsg = `Contraseña: ${result.contraseña[0]}`;
+        
+        responseBox.textContent = `Error: ${errorMsg}`;
+      } catch (error) {
+        responseBox.className = "response-box show error";
+        responseBox.textContent = "Error de conexión. Intenta de nuevo.";
+      } finally {
+        submitBtn.disabled = false;
+      }
+    });
+  </script>
+</body>
+</html>

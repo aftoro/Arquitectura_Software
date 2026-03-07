@@ -1,17 +1,24 @@
 import os
+from abc import ABC, abstractmethod
 
 
-class EmailService:
+class Notificador(ABC):
+    @abstractmethod
+    def send(self, to, subject, body):
+        pass
+
+
+class EmailService(Notificador):
     def send(self, to, subject, body):
         print("Enviando email a", to)
 
 
-class SMSService:
+class SMSService(Notificador):
     def send(self, to, subject, body):
         print("Enviando SMS a", to)
 
 
-class MockNotificationService:
+class MockNotificationService(Notificador):
     def send(self, to, subject, body):
         print("Notificacion mock para", to)
 
