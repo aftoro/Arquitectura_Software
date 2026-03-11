@@ -11,10 +11,11 @@ from .serializers import (
     ClienteLoginResponseSerializer,
     ClienteLoginSerializer,
     ClienteRegistroSerializer,
+    ClienteRegistroResponseSerializer,
     ClienteSerializer,
     ServicioSerializer,
 )
-from .services import CitaNotFoundError, CitaService, HorarioNoDisponibleError
+from .services import CitaNotFoundError, CitaService, HorarioNoDisponibleError, InvalidCredentialsError
 
 
 class CrearCitaView(APIView):
@@ -73,22 +74,25 @@ class ServiciosListView(APIView):
 class RegistroClienteView(APIView):
     """
     Vista para registrar un nuevo cliente.
+        service_class = CitaService
+    
     """
     def post(self, request):
         serializer = ClienteRegistroSerializer(data=request.data)
         if serializer.is_valid():
-            cliente = serializer.save()
-            return Response(
-                {
-                    "id": cliente.id, 
-                    "nombre": cliente.nombre, 
-                    "apellido": cliente.apellido,
-                    "celular": cliente.celular,
-                    "correo": cliente.correo,
-                    "msg": "Cliente registrado exitosamente"
-                },
-                status=status.HTTP_201_CREATED
-            )
+            try:
+                cliente = self.service_class().registro_cliente(
+                    nombre=serializer.validated_data['nombre'],
+                    apellido=serializer.validated_data.get('apellido', ''),
+                    celular=serializer.validated_data.get('celular', ''),
+                    correo=serializer.validated_data['correo'],
+                    contraseña=serializer.validated_data['contraseña']
+                )
+                response_serializer = ClienteRegistroResponseSerializer(cliente)
+                return Response(response_serializer.data, status=status.HTTP_201_CREATED)
+            except ValueError as exc:
+                return Response({"error": str(exc)}, status=status.HTTP_400_BAD_REQUEST)
+        
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -100,6 +104,8 @@ class LoginClienteView(APIView):
     """
     Vista para iniciar sesión con correo y contraseña.
     """
+    service_class = CitaService
+    
     def post(self, request):
         serializer = ClienteLoginSerializer(data=request.data)
         if serializer.is_valid():
@@ -107,21 +113,19 @@ class LoginClienteView(APIView):
             contraseña = serializer.validated_data['contraseña']
             
             try:
-                cliente = Cliente.objects.get(correo=correo)
-            except Cliente.DoesNotExist:
+                cliente = CitaService().login_cliente(correo, contraseña)
+                response_serializer = ClienteLoginResponseSerializer(cliente)
+                return Response(response_serializer.data, status=status.HTTP_200_OK)
+            except InvalidCredentialsError as exc:
                 return Response(
-                    {"error": "El correo o contraseña son incorrectos"},
+                    {"error": str(exc)},
                     status=status.HTTP_401_UNAUTHORIZED
                 )
-            
-            if not cliente.check_password(contraseña):
+            except ValueError as exc:
                 return Response(
-                    {"error": "El correo o contraseña son incorrectos"},
-                    status=status.HTTP_401_UNAUTHORIZED
+                    {"error": str(exc)},
+                    status=status.HTTP_400_BAD_REQUEST
                 )
-            
-            response_serializer = ClienteLoginResponseSerializer(cliente)
-            return Response(response_serializer.data, status=status.HTTP_200_OK)
         
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 

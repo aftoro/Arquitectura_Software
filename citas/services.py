@@ -10,6 +10,14 @@ class CitaNotFoundError(Exception):
 class HorarioNoDisponibleError(Exception):
     pass
 
+
+class ClienteNotFoundError(Exception):
+    pass
+
+
+class InvalidCredentialsError(Exception):
+    pass
+
 class CitaService:
     def __init__(self, builder_cls=CitaBuilder, notifier_factory=NotificationFactory):
         self.builder_cls = builder_cls
@@ -59,3 +67,39 @@ class CitaService:
             tipo=payload.get("tipo", tipo),
         )
         return {"msg": "Cita creada", "cita_id": cita.id}
+
+    def login_cliente(self, correo, contraseña):
+        """Autentica un cliente con correo y contraseña"""
+        if not correo or not contraseña:
+            raise ValueError("Correo y contraseña son requeridos")
+
+        try:
+            cliente = Cliente.objects.get(correo=correo)
+        except Cliente.DoesNotExist as exc:
+            raise InvalidCredentialsError("El correo o contraseña son incorrectos") from exc
+
+        if not cliente.check_password(contraseña):
+            raise InvalidCredentialsError("El correo o contraseña son incorrectos")
+
+        return cliente
+
+    def registro_cliente(self, nombre, apellido, celular, correo, contraseña):
+        """Registra un nuevo cliente"""
+        if not nombre or not correo or not contraseña:
+            raise ValueError("Nombre, correo y contraseña son requeridos")
+
+        if len(contraseña) < 6:
+            raise ValueError("La contraseña debe tener minimo 6 caracteres")
+
+        if Cliente.objects.filter(correo=correo).exists():
+            raise ValueError("El correo ya está registrado")
+
+        cliente = Cliente.objects.create(
+            nombre=nombre,
+            apellido=apellido or "",
+            celular=celular or "",
+            correo=correo
+        )
+        cliente.set_password(contraseña)
+        cliente.save()
+        return cliente

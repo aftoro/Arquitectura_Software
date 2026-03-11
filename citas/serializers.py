@@ -65,3 +65,19 @@ class ClienteLoginResponseSerializer(serializers.ModelSerializer):
     
     def get_nombre_completo(self, obj):
         return f"{obj.nombre} {obj.apellido}".strip()
+
+
+class ClienteRegistroResponseSerializer(serializers.ModelSerializer):
+    nombre_completo = serializers.SerializerMethodField()
+    
+    class Meta:
+        model = Cliente
+        fields = ['id', 'nombre', 'apellido', 'nombre_completo', 'correo', 'celular']
+    
+    def get_nombre_completo(self, obj):
+        return f"{obj.nombre} {obj.apellido}".strip()
+    
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        data['msg'] = "Cliente registrado exitosamente"
+        return data
