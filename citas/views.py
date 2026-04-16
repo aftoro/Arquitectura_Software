@@ -77,6 +77,8 @@ class RegistroClienteView(APIView):
         service_class = CitaService
     
     """
+    service_class = CitaService
+
     def post(self, request):
         serializer = ClienteRegistroSerializer(data=request.data)
         if serializer.is_valid():
